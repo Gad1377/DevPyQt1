@@ -48,6 +48,8 @@ class Window(QtWidgets.QWidget):
         self.cb.addItems(list(self.lcd_modes.keys()))
         self.cb.currentTextChanged.connect(lambda mode: self.lcd.setMode(self.lcd_modes[mode]))
 
+        self.cb.currentTextChanged.connect(lambda mode: self.settings.setValue("lcd_mode", mode))
+
         l.addWidget(self.dial)
         l.addWidget(self.lcd)
         l.addWidget(self.slider)
@@ -55,9 +57,22 @@ class Window(QtWidgets.QWidget):
 
         self.setLayout(l)
 
+        self.settings = QtCore.QSettings("StudentApp", "DialSync")
+        self.load_settings()
+
     def onValueChanged(self, value):
+        self.dial.blockSignals(True)
+        self.slider.blockSignals(True)
+
         self.dial.setValue(value)
         self.slider.setValue(value)
+        self.lcd.display(value)
+
+        self.dial.blockSignals(False)
+        self.slider.blockSignals(False)
+
+        print(f"Значение изменено: {value}")
+        self.settings.setValue("lcd_mode", value)
 
 
     def eventFilter(self, watched, event):
@@ -66,8 +81,22 @@ class Window(QtWidgets.QWidget):
                 self.dial.setValue(self.dial.value() - 1)
             elif event.key() == QtCore.Qt.Key.Key_Plus:
                 self.dial.setValue(self.dial.value() + 1)
-        
+            print(f"[Клавиатура] Новое значение dial: {self.dial.value()}")
+            return True
         return super().eventFilter(watched, event)
+
+    def load_settings(self):
+        saved_value = self.settings.value("lcd_value", 14)
+        if saved_value is not None:
+            val = int(saved_value)
+            self.dial.setValue(val)
+            self.slider.setValue(val)
+            self.lcd.display(val)
+
+        saved_mode = self.settings.value("lcd_mode", "dec")
+        if saved_mode in self.lcd_modes:
+            self.cb.setCurrentText(saved_mode)
+            self.lcd.setMode(self.lcd_modes[saved_mode])
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication()

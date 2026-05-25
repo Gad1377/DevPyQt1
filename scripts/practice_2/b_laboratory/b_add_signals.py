@@ -134,18 +134,17 @@ class Window(QtWidgets.QWidget):
 
         self.pushButtonComboBox.clicked.connect(self.onPushButtonComboBoxClicked)  # TODO подключить слот для вывода текста из comboBox в plainTextEditLog при нажатии на кнопку
         self.pushButtonLineEdit.clicked.connect(self.onPushButtonLineEditClicked)
-        self.pushButtonTextEdit  # TODO подключить слот для вывода текста из textEdit в plainTextEditLog при нажатии на кнопку
-        self.pushButtonPlainTextEdit  # TODO подключить слот для вывода текста из plaineTextEdit в plainTextEditLog при нажатии на кнопку
-        self.pushButtonSpinBox  # TODO подключить слот для вывода значения из spinBox в plainTextEditLog при нажатии на кнопку
-        self.pushButtonDoubleSpinBox  # TODO подключить слот для вывода значения из doubleSpinBox в plainTextEditLog при нажатии на кнопку
-        self.pushButtonTimeEdit  # TODO подключить слот для вывода времени из timeEdit в plainTextEditLog при нажатии на кнопку
-        self.pushButtonDateTimeEdit  # TODO подключить слот для вывода времени из dateTimeEdit в plainTextEditLog при нажатии на кнопку
-        self.pushButtonClearLog  # TODO подключить слот для очистки plainTextEditLog при нажатии на кнопку
+        self.pushButtonTextEdit.clicked.connect(self.onPushButtonTextEditClicked)
+        self.pushButtonPlainTextEdit.clicked.connect(self.onPushButtonPlainTextEditClicked)
+        self.pushButtonSpinBox.clicked.connect(self.onPushButtonSpinBoxClicked)
+        self.pushButtonDoubleSpinBox.clicked.connect(self.onPushButtonDoubleSpinBoxClicked)
+        self.pushButtonTimeEdit.clicked.connect(self.onPushButtonTimeEditClicked)
+        self.pushButtonDateTimeEdit.clicked.connect(self.onPushButtonDateTimeEditClicked)
+        self.pushButtonClearLog.clicked.connect(self.onPushButtonClearLogClicked)
 
-        self.comboBox  # TODO подключить слот для вывода текста в plainTextEditLog при изменении выбранного элемента в comboBox
-        self.spinBox  # TODO подключить слот для вывода значения в plainTextEditLog при изменении значения в spinBox
-        self.dateTimeEdit  # TODO подключить слот для вывода датывремени в plainTextEditLog при изменении датывремени в dateTimeEdit
-
+        self.comboBox.currentTextChanged.connect(self.onComboBoxCurrentTextChanged)
+        self.spinBox.valueChanged.connect(self.onSpinBoxValueChanged)
+        self.dateTimeEdit.dateTimeChanged.connect(self.onDateTimeEditDateTimeChanged)
     # slots --------------------------------------------------------------
     def onPushButtonLineEditClicked(self) -> None:
         """
@@ -158,7 +157,42 @@ class Window(QtWidgets.QWidget):
 
     def onPushButtonComboBoxClicked(self):
         self.plainTextEditLog.setPlainText(self.comboBox.currentText())
-    # TODO Самостоятельная реализация слотов для сигналов
+
+    def onPushButtonLineEditClicked(self) -> None:
+        self.plainTextEditLog.setPlainText(self.lineEdit.text())
+
+    def onPushButtonTextEditClicked(self) -> None:
+        self.plainTextEditLog.setPlainText(self.textEdit.toPlainText())
+
+    def onPushButtonPlainTextEditClicked(self) -> None:
+        self.plainTextEditLog.setPlainText(self.plainTextEdit.toPlainText())
+
+    def onPushButtonSpinBoxClicked(self) -> None:
+        self.plainTextEditLog.setPlainText(str(self.spinBox.value()))
+
+    def onPushButtonDoubleSpinBoxClicked(self) -> None:
+        self.plainTextEditLog.setPlainText(str(self.doubleSpinBox.value()))
+
+    def onPushButtonTimeEditClicked(self) -> None:
+        self.plainTextEditLog.setPlainText(self.timeEdit.time().toString("HH:mm:ss"))
+
+    def onPushButtonDateTimeEditClicked(self) -> None:
+        self.plainTextEditLog.setPlainText(self.dateTimeEdit.dateTime().toString())
+
+    def onPushButtonClearLogClicked(self) -> None:
+        self.plainTextEditLog.clear()
+
+
+
+
+    def onComboBoxCurrentTextChanged(self, text: str) -> None:
+        self.plainTextEditLog.setPlainText(text)
+
+    def onSpinBoxValueChanged(self, value: int) -> None:
+        self.plainTextEditLog.setPlainText(str(value))
+
+    def onDateTimeEditDateTimeChanged(self, dt: QtCore.QDateTime) -> None:
+        self.plainTextEditLog.setPlainText(dt.toString())
 
 
 if __name__ == "__main__":
